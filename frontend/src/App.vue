@@ -41,8 +41,8 @@ const updateOnlineStatus = async () => {
   isOnline.value = navigator.onLine;
   if (navigator.onLine) {
     await syncQueue();
-    await updateSyncCount();
   }
+  await updateSyncCount();
 };
 
 const updateSyncCount = async () => {

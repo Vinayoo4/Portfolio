@@ -61,7 +61,6 @@ export const getSubmissions = async (req: Request, res: Response) => {
 
 export const submitForm = async (req: Request, res: Response) => {
   try {
-    // Basic structural validation could go here
     const newSubmission: FormSubmission = {
       ...req.body,
       id: crypto.randomUUID(),
@@ -69,6 +68,28 @@ export const submitForm = async (req: Request, res: Response) => {
     };
     const saved = await dbSubmissions.insert(newSubmission);
     res.status(201).json(saved);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export const deleteTemplate = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const deleted = await dbTemplates.delete(id);
+    if (!deleted) return res.status(404).json({ error: 'Template not found' });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export const deleteSubmission = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const deleted = await dbSubmissions.delete(id);
+    if (!deleted) return res.status(404).json({ error: 'Submission not found' });
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }

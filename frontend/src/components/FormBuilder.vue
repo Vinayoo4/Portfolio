@@ -38,11 +38,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useFormStore } from '../stores/forms.js';
-import { useAuthStore } from '../stores/auth.js';
 
 const emit = defineEmits(['close']);
 const forms = useFormStore();
-const auth = useAuthStore();
 
 const template = ref({
   title: '',
@@ -57,18 +55,8 @@ const addField = () => {
 
 const saveTemplate = async () => {
   try {
-    const res = await fetch(import.meta.env.VITE_API_URL + '/api/forms/templates', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.token}`
-      },
-      body: JSON.stringify(template.value)
-    });
-    if (res.ok) {
-      forms.fetchTemplates();
-      emit('close');
-    }
+    await forms.createTemplate(template.value);
+    emit('close');
   } catch (error) {
     //
   }

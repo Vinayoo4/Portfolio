@@ -6,6 +6,8 @@ import patientRoutes from './routes/patients.js';
 import appointmentRoutes from './routes/appointments.js';
 import formRoutes from './routes/forms.js';
 import billingRoutes from './routes/billing.js';
+import serviceRoutes from './routes/services.js';
+import clinicRoutes from './routes/clinics.js';
 import { validateEnv } from './utils/env.js';
 import { errorHandler } from './middleware/errorHandler.js';
 const env = validateEnv();
@@ -27,6 +29,8 @@ app.use('/api/patients', patientRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api/services', serviceRoutes);
+app.use('/api/clinics', clinicRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

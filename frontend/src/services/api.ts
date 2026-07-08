@@ -2,7 +2,7 @@ import axios from 'axios';
 import { isAppwriteEnabled } from './appwrite';
 import { getCachedData, cacheData, queueSyncRequest } from './offlineStorage';
 
-const apiClient = axios.create({
+export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
     'Content-Type': 'application/json',

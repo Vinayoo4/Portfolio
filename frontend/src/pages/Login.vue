@@ -39,28 +39,21 @@ const authStore = useAuthStore();
 const handleLogin = async () => {
   error.value = '';
   try {
-    const res = await fetch(import.meta.env.VITE_API_URL + '/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email.value, password: password.value })
-    });
+    const data = await authStore.login(email.value, password.value);
 
-    if (res.ok) {
-      const data = await res.json();
-      authStore.setAuth(data.user, data.token);
-
-      switch(data.user.role) {
-        case 'ADMIN': router.push('/admin'); break;
-        case 'RECEPTION': router.push('/reception'); break;
-        case 'DENTIST': router.push('/dentist'); break;
-        case 'PATIENT': router.push('/patient'); break;
-        default: router.push('/');
-      }
-    } else {
-      error.value = 'Invalid credentials';
+    switch(data.user.role) {
+      case 'ADMIN': router.push('/admin'); break;
+      case 'RECEPTION': router.push('/reception'); break;
+      case 'DENTIST': router.push('/dentist'); break;
+      case 'PATIENT': router.push('/patient'); break;
+      default: router.push('/');
     }
-  } catch (err) {
-    error.value = 'Network error';
+  } catch (err: any) {
+    if (err.response?.status === 401) {
+      error.value = 'Invalid credentials';
+    } else {
+      error.value = err.response?.data?.error || 'Network error';
+    }
   }
 };
 </script>

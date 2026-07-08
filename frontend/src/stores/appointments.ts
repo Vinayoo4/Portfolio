@@ -27,6 +27,10 @@ export const useAppointmentStore = defineStore('appointments', {
       }
     },
 
+    async createAppointment(data: any) {
+      return appointmentsService.create(data);
+    },
+
     async updateStatus(id: string, status: string) {
        // Optimistic update
        const index = this.appointments.findIndex(a => a.id === id);

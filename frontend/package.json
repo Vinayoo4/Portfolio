@@ -34,5 +34,8 @@
     "vite-plugin-pwa": "^1.3.0",
     "vitest": "^4.1.7",
     "vue-tsc": "^3.2.8"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-win32-x64-msvc": "^1.0.0"
   }
 }

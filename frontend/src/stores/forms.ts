@@ -24,6 +24,10 @@ export const useFormStore = defineStore('forms', {
         this.isLoading = false;
       }
     },
+    async createTemplate(data: any) {
+      await templatesService.create(data);
+      await this.fetchTemplates();
+    },
     async submitForm(submission: any) {
       try {
         await submissionsService.create(submission);

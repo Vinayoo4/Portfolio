@@ -15,7 +15,7 @@
         v-for="a in appointments.appointments"
         :key="a.id"
         :appointment="a"
-        @status-changed="loadSchedule"
+        @status-changed="onStatusChanged"
       />
       <div v-if="appointments.appointments.length === 0" class="text-gray-400 col-span-full">
         No appointments scheduled for this date.
@@ -36,6 +36,11 @@ const filterDate = ref(new Date().toISOString().split('T')[0]);
 
 const loadSchedule = () => {
   appointments.fetchAppointments(filterDate.value, auth.user?.id);
+};
+
+const onStatusChanged = async (id: string, status: string) => {
+  await appointments.updateStatus(id, status);
+  loadSchedule();
 };
 
 onMounted(() => {

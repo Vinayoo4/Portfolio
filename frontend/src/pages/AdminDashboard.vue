@@ -39,6 +39,7 @@
 import { ref, onMounted } from 'vue';
 import { useFormStore } from '../stores/forms.js';
 import FormBuilder from '../components/FormBuilder.vue';
+import { apiClient } from '../services/api.js';
 import { cacheData, getCachedData } from '../services/offlineStorage.js';
 
 const forms = useFormStore();
@@ -50,17 +51,10 @@ const showBuilder = ref(false);
 const fetchRevenue = async () => {
   revenueLoading.value = true;
   revenueError.value = '';
-  const authToken = localStorage.getItem('token');
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/billing/overview?startDate=2023-01-01&endDate=2099-12-31`, {
-      headers: { Authorization: `Bearer ${authToken}` }
-    });
-    if (res.ok) {
-      revenue.value = await res.json();
-      await cacheData('admin_revenue', revenue.value);
-    } else {
-      revenueError.value = 'Failed to load revenue';
-    }
+    const res = await apiClient.get('/api/billing/overview?startDate=2023-01-01&endDate=2099-12-31');
+    revenue.value = res.data;
+    await cacheData('admin_revenue', revenue.value);
   } catch {
     const cached = await getCachedData('admin_revenue');
     if (cached) {

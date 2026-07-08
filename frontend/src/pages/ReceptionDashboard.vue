@@ -31,11 +31,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useAppointmentStore } from '../stores/appointments.js';
-import { useAuthStore } from '../stores/auth.js';
 import ReceptionBooking from '../components/ReceptionBooking.vue';
 
 const appointments = useAppointmentStore();
-const auth = useAuthStore();
 const filterDate = ref(new Date().toISOString().split('T')[0]);
 
 const loadAppointments = () => {
@@ -43,21 +41,8 @@ const loadAppointments = () => {
 };
 
 const updateStatus = async (id: string, status: string) => {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.token}`
-      },
-      body: JSON.stringify({ status })
-    });
-    if (res.ok) {
-      loadAppointments();
-    }
-  } catch (error) {
-    //
-  }
+  await appointments.updateStatus(id, status);
+  loadAppointments();
 };
 
 onMounted(() => {

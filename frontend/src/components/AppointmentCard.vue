@@ -26,7 +26,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useAuthStore } from '../stores/auth.js';
 
 const props = defineProps({
   appointment: {
@@ -36,7 +35,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['status-changed']);
-const auth = useAuthStore();
 const currentStatus = ref(props.appointment.status);
 
 const statusColor = computed(() => {
@@ -51,25 +49,6 @@ const statusColor = computed(() => {
 });
 
 const updateStatus = async () => {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/appointments/${props.appointment.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.token}`
-      },
-      body: JSON.stringify({ status: currentStatus.value })
-    });
-
-    if (res.ok) {
-      emit('status-changed');
-    } else {
-      // Revert on error
-      currentStatus.value = props.appointment.status;
-    }
-  } catch (error) {
-    // We would implement the offline queueing here in a real PWA context
-    currentStatus.value = props.appointment.status;
-  }
+  emit('status-changed', props.appointment.id, currentStatus.value);
 };
 </script>

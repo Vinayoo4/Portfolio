@@ -29,10 +29,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthStore } from '../stores/auth.js';
+import { useAppointmentStore } from '../stores/appointments.js';
 
 const emit = defineEmits(['booked']);
-const auth = useAuthStore();
+const appointmentsStore = useAppointmentStore();
 
 const form = ref({
   patientId: '',
@@ -50,25 +50,12 @@ const isError = ref(false);
 const bookAppointment = async () => {
   message.value = '';
   try {
-    const res = await fetch(import.meta.env.VITE_API_URL + '/api/appointments', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.token}`
-      },
-      body: JSON.stringify(form.value)
-    });
-
-    if (res.ok) {
-      message.value = 'Appointment booked successfully.';
-      isError.value = false;
-      emit('booked');
-    } else {
-      message.value = 'Failed to book appointment.';
-      isError.value = true;
-    }
+    await appointmentsStore.createAppointment(form.value);
+    message.value = 'Appointment booked successfully.';
+    isError.value = false;
+    emit('booked');
   } catch (error) {
-    message.value = 'Network error.';
+    message.value = 'Failed to book appointment.';
     isError.value = true;
   }
 };

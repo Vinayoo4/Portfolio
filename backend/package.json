@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "start": "tsx src/server.ts",
+    "start": "node dist/backend/src/server.js",
+    "build": "tsc",
+    "clean": "rm -rf dist",
     "seed": "tsx src/seed/index.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"

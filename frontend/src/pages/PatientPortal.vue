@@ -47,8 +47,9 @@ const appointments = useAppointmentStore();
 const forms = useFormStore();
 
 onMounted(() => {
-  // Ideally filter by patientId, assuming auth user has patientId
-  appointments.fetchAppointments();
+  // Filter by patientId if the user has one, or show all for PATIENT role
+  const patientId = auth.user?.id;
+  appointments.fetchAppointments(undefined, patientId);
   forms.fetchTemplates();
 });
 </script>

@@ -48,3 +48,14 @@ export const updatePatient = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+export const deletePatient = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as string;
+    const deleted = await dbPatients.delete(id);
+    if (!deleted) return res.status(404).json({ error: 'Patient not found' });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};

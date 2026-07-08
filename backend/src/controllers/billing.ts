@@ -1,21 +1,18 @@
 import { Request, Response } from 'express';
 import { getDatabaseAdapter } from '../storage/DatabaseService.js';
-import { Appointment } from '../../../shared/types/index.js';
+import { Appointment, Service } from '../../../shared/types/index.js';
 
 const dbAppointments = getDatabaseAdapter<Appointment>('appointments');
+const dbServices = getDatabaseAdapter<Service>('services');
 
-// Simplified simulated billing/revenue computation
-// We'll calculate revenue based on completed appointments
 export const getRevenueOverview = async (req: Request, res: Response) => {
   try {
-    const { startDate, endDate } = req.query; // YYYY-MM-DD
+    const { startDate, endDate } = req.query;
 
     if (!startDate || !endDate) {
       return res.status(400).json({ error: 'startDate and endDate are required' });
     }
 
-    // In an ideal world, the findMany method or a new query method could do date range filtering.
-    // For now we can at least filter by 'COMPLETED' status down in the database layer.
     let appointments;
     if (dbAppointments.findMany) {
       appointments = await dbAppointments.findMany({ status: 'COMPLETED' as any });
@@ -24,17 +21,22 @@ export const getRevenueOverview = async (req: Request, res: Response) => {
       appointments = appointments.filter(a => a.status === 'COMPLETED');
     }
 
+    const services = await dbServices.getAll();
+    const servicePriceMap = new Map(services.map(s => [s.id, s.price]));
+
     let totalRevenue = 0;
     let completedCount = 0;
-
-    // Simulate basic static pricing for this example
-    const AVG_REVENUE_PER_APPT = 150;
 
     appointments.forEach(appt => {
       if (appt.date >= (startDate as string) && appt.date <= (endDate as string)) {
         completedCount++;
-        // In a real app we'd sum up appt.services prices
-        totalRevenue += AVG_REVENUE_PER_APPT;
+        if (appt.services && appt.services.length > 0) {
+          appt.services.forEach(serviceId => {
+            totalRevenue += servicePriceMap.get(serviceId) || 0;
+          });
+        } else {
+          totalRevenue += 150;
+        }
       }
     });
 
